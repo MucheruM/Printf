@@ -13,3 +13,8 @@ Task 1:
 Task 2:
      - d
      - i
+
+## Compilation ##
+The code is to be compiled using the following:
+
+$ gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c
