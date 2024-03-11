@@ -1,4 +1,4 @@
-				# 0x11.C - printf #
+<h1> 0x11.C - printf </h1>
 ## Background Information ##
 This is a printf project that mimics the function of the printf function in the shell.
 
