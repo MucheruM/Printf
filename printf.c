@@ -1,77 +1,89 @@
 #include "main.h"
+#include <stdarg.h>
+#include <stdio.h>
 
 /**
- * _printf - This is a printf function
- * @format: A parameter holding a string to be printed
- * Return: An integer value
+ * process_specifier - Helper function to process format specifiers
+ * @spec: the characters to be processed
+ * @args: list of arguments
+ *
+ * Return: number of characters printed
+ */
+int process_specifier(char spec, va_list args)
+{
+	int count = 0;
+	int result;
+	const char *str;
+
+	switch (spec)
+	{
+	case 'c':
+		_putchar(va_arg(args, int)); /* Output a character */
+		count++;
+		break;
+
+	case 's':
+	{
+		str = va_arg(args, const char *);
+		while (*str)
+		{
+			_putchar(*str);
+			str++;
+			count++;
+		}
+		break;
+	}
+
+	case '%':
+		_putchar('%');
+		count++;
+		break;
+
+	default:
+		return (-1); /* Unknown specifier */
+	}
+
+	return (count);
+}
+
+/**
+ * _printf - Print characters in the stdout
+ * @format: the characters to be printed
+ *
+ * Return: number of characters printed
  */
 int _printf(const char *format, ...)
 {
-	int char_print = 0;
+	va_list args;
+	int count = 0;
+	const char *ptr;
+	int result;
 
-	va_list list_args;
-
-	if (format == NULL)
-	{
+	if (!format)
 		return (-1);
-	}
 
-	va_start(list_args, format);
+	va_start(args, format);
 
-	while (*format)
+	for (ptr = format; *ptr; ptr++)
 	{
-		if(*format != '%')
+		if (*ptr == '%')
 		{
-			write(1, format, 1);
-			char_print ++;
+			ptr++;
+			result = process_specifier(*ptr, args);
+			if (result == -1)
+			{
+				va_end(args);
+				return (-1);
+			}
+			count += result;
 		}
-		else /* If format is a % */
+		else
 		{
-			format++; /* Skips to next char after % */
-
-			if (*format == '\0')
-				break;
-
-			if (*format == '%') /* Solves %% */
-			{
-				write(1, format, 1);
-				char_print++;
-			}
-
-			else if (*format == 'c')
-			{
-				char c = va_arg(list_args, int);
-				write(1, &c, 1);
-				char_print++;
-			}
-
-			else if (*format == 's')
-			{
-				char *str = va_arg(list_args, char*);
-				int str_len = 0;
-
-				while (str[str_len] != '\0')
-					str_len++;
-
-				write(1, str, str_len);
-				char_print += str_len;
-			}
+			_putchar(*ptr);
+			count++;
 		}
-
-		format++;
 	}
 
-	va_end(list_args);
-
-	return char_print;
-}
-
-int main()
-{
-	_printf("Mucheru Printf Assignment\n");
-	_printf("%c\n", 'M');
-	_printf("%s\n", "MucheruM");
-	_printf("%%\n");
-
-	return (0);
+	va_end(args);
+	return (count);
 }
